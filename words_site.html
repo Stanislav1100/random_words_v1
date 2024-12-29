@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Word Cards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 300px;
+            height: 200px;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            font-size: 24px;
+            text-align: center;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div id="card" class="card">Click "Next" to Start</div>
+        <div class="controls">
+            <button id="prevButton">Previous</button>
+            <button id="nextButton">Next</button>
+        </div>
+    </div>
+
+    <script>
+        // Загрузка слов из текстового файла
+        let words = [];
+        fetch('words.txt')
+            .then(response => response.text())
+            .then(data => {
+                words = data.split('\n').filter(word => word.trim() !== '');
+                shuffleWords();
+            });
+
+        // Перемешивание массива слов
+        function shuffleWords() {
+            for (let i = words.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [words[i], words[j]] = [words[j], words[i]];
+            }
+        }
+
+        let currentIndex = 0;
+
+        // Отображение текущего слова
+        function displayWord() {
+            const card = document.getElementById('card');
+            if (words.length === 0) {
+                card.textContent = 'Loading words...';
+            } else {
+                card.textContent = words[currentIndex];
+            }
+        }
+
+        // Обработчики кнопок
+        document.getElementById('nextButton').addEventListener('click', () => {
+            if (words.length > 0) {
+                currentIndex = (currentIndex + 1) % words.length;
+                displayWord();
+            }
+        });
+
+        document.getElementById('prevButton').addEventListener('click', () => {
+            if (words.length > 0) {
+                currentIndex = (currentIndex - 1 + words.length) % words.length;
+                displayWord();
+            }
+        });
+
+        // Инициализация
+        displayWord();
+    </script>
+</body>
+</html>
